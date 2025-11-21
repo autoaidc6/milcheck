@@ -14,8 +14,10 @@ export const ResultCard: React.FC<ResultCardProps> = ({ country, currency, local
   // Debounced Auto-Fetch
   useEffect(() => {
     let isMounted = true;
-    setInsight(null); 
     
+    // Clear previous insight immediately when props change to avoid stale data
+    setInsight(null);
+
     const timer = setTimeout(async () => {
       if (!isMounted) return;
       try {
@@ -24,7 +26,7 @@ export const ResultCard: React.FC<ResultCardProps> = ({ country, currency, local
       } catch (e) {
         // Fail silently
       }
-    }, 1000); // Reduced to 1s for snappier feel
+    }, 800); 
 
     return () => {
       isMounted = false;
@@ -33,48 +35,44 @@ export const ResultCard: React.FC<ResultCardProps> = ({ country, currency, local
   }, [country.name, currency.code, localAmount]);
 
   return (
-    <div className="group bg-white rounded-lg border border-slate-200 p-3 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 hover:border-gold-400 transition-all shadow-sm hover:shadow-md">
-      {/* Left: Flag & Name */}
-      <div className="flex items-center gap-3 min-w-[180px]">
-        <span className="text-3xl select-none">{country.flagEmoji}</span>
-        <div className="flex flex-col">
-          <h3 className="text-sm font-bold text-slate-900 leading-tight">{country.name}</h3>
-          <span className="text-[10px] font-semibold text-slate-400 tracking-wide uppercase">{currency.name}</span>
-        </div>
-      </div>
-
-      {/* Middle: AI Insight (Flexible width) */}
-      <div className="flex-grow min-h-[1.25rem] flex items-center">
-         {insight ? (
-            <p className="text-xs text-slate-600 italic border-l-2 border-gold-300 pl-2 animate-in fade-in slide-in-from-left-2 duration-500">
-              {insight}
-            </p>
-         ) : (
-            // Placeholder to prevent layout jump, or empty if preferred. 
-            // Keeping it minimal:
-            <div className="hidden sm:block h-0.5 w-12 bg-slate-100 rounded"></div>
-         )}
-      </div>
-
-      {/* Right: Amount & Badge */}
-      <div className="flex items-center justify-between sm:justify-end gap-4 min-w-[200px]">
-        <div className="text-right">
-          <p className="text-lg font-serif font-bold text-gold-600 leading-none" title={localAmount.toLocaleString()}>
-            {currency.symbol}{localAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
-          </p>
-          <p className="text-[10px] text-slate-400 font-medium uppercase mt-0.5 text-right">
-            {currency.code}
-          </p>
+    <div className="group relative bg-white rounded-xl border border-slate-100 p-4 shadow-sm hover:shadow-md transition-all duration-200 flex items-center justify-between gap-4 overflow-hidden">
+      {/* Left Side: Flag and Text Info */}
+      <div className="flex items-center gap-4 min-w-0 flex-1">
+        <div className="flex-shrink-0 text-3xl sm:text-4xl bg-slate-50 w-12 h-12 flex items-center justify-center rounded-full shadow-inner select-none">
+          {country.flagEmoji}
         </div>
         
-        <div className="flex-shrink-0">
-           {localAmount >= 1000000000 ? (
-               <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Billionaire</span>
-             ) : (
-               <span className="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">Millionaire</span>
-             )}
+        <div className="flex flex-col min-w-0 pr-2">
+          <div className="flex items-baseline gap-2">
+            <h3 className="text-base font-bold text-slate-900 truncate">{country.name}</h3>
+            <span className="hidden sm:inline-block text-[10px] font-bold text-slate-400 uppercase tracking-wider">{currency.name}</span>
+          </div>
+          
+          {/* Fixed height container for insight to prevent layout jumps */}
+          <div className="h-4 mt-0.5 flex items-center">
+            {insight ? (
+              <p className="text-xs text-gold-600 font-medium truncate italic animate-in fade-in slide-in-from-left-1 duration-300">
+                "{insight}"
+              </p>
+            ) : (
+              <div className="h-1.5 w-24 bg-slate-100 rounded-full animate-pulse" />
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Right Side: Amount */}
+      <div className="text-right flex-shrink-0 pl-2">
+        <div className="text-lg sm:text-xl font-serif font-bold text-slate-800 group-hover:text-gold-600 transition-colors">
+          {currency.symbol}{localAmount.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+        </div>
+        <div className="text-[10px] text-slate-400 font-medium uppercase mt-0.5">
+          {currency.code}
+        </div>
+      </div>
+      
+      {/* Subtle Gold decorative bar on hover */}
+      <div className="absolute left-0 top-0 bottom-0 w-1 bg-gold-400 opacity-0 group-hover:opacity-100 transition-opacity rounded-l-xl" />
     </div>
   );
 };

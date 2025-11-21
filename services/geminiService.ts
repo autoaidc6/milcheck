@@ -28,14 +28,14 @@ export const getPurchasingPowerInsight = async (
 
   if (!ai) {
     console.warn("Gemini API Key not found.");
-    return `Wealth status confirmed in ${countryName}.`;
+    return `Wealth confirmed.`;
   }
 
   try {
+    // Very concise prompt for the new compact UI
     const prompt = `
-      I have approximately ${localAmount.toLocaleString()} ${currencyCode} in ${countryName}. 
-      In 1 very short sentence (max 15 words), what is a fun luxury item or lifestyle perk this specific amount buys me there?
-      Be witty.
+      I have approx ${localAmount.toLocaleString()} ${currencyCode} in ${countryName}. 
+      In 1 short witty sentence (max 10 words), what fun luxury does this specific amount buy?
     `;
 
     const response = await ai.models.generateContent({
@@ -43,8 +43,11 @@ export const getPurchasingPowerInsight = async (
       contents: prompt,
     });
 
-    const text = response.text?.trim() || "Enjoy your wealth!";
+    let text = response.text?.trim() || "Enjoy your wealth!";
     
+    // Remove quotes if the model added them
+    text = text.replace(/^["']|["']$/g, '');
+
     // Save to cache
     insightCache.set(cacheKey, text);
     

@@ -49,25 +49,34 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 flex flex-col">
       
-      {/* Sticky Header containing Inputs */}
+      {/* Compact Sticky Header */}
       <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 py-3">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-2xl mx-auto px-4 py-3">
+          <div className="flex items-center gap-3">
             
-            {/* Title */}
-            <div className="flex items-center gap-2 flex-shrink-0 self-start sm:self-center">
-              <div className="w-8 h-8 bg-gradient-to-br from-gold-400 to-gold-600 rounded-lg flex items-center justify-center text-white font-serif font-bold text-lg shadow-sm">
-                M
-              </div>
-              <h1 className="text-lg font-bold text-slate-900 tracking-tight hidden xs:block">
-                Millionaire Status
-              </h1>
+            {/* Icon */}
+            <div className="w-10 h-10 bg-gradient-to-br from-gold-400 to-gold-600 rounded-xl flex items-center justify-center text-white font-serif font-bold text-xl shadow-sm flex-shrink-0">
+              M
             </div>
 
-            {/* Input Group */}
-            <div className="flex items-center gap-2 w-full sm:w-auto flex-grow justify-end">
+            {/* Inputs - Flex to fill space */}
+            <div className="flex flex-grow items-center gap-2">
+              {/* Amount Input */}
+              <div className="relative flex-grow">
+                <input
+                  type="number"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  placeholder="0"
+                  className="w-full h-10 pl-3 pr-2 bg-slate-100 focus:bg-white rounded-lg border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-gold-400 text-base font-bold text-slate-900 placeholder-slate-400 transition-all"
+                />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-[9px] font-bold text-slate-400 uppercase">
+                  Amount
+                </div>
+              </div>
+
               {/* Currency Select */}
-              <div className="relative w-24 sm:w-32 flex-shrink-0">
+              <div className="relative w-24 sm:w-28 flex-shrink-0">
                 <select
                   id="currency"
                   value={baseCurrencyCode}
@@ -86,37 +95,29 @@ function App() {
                   </svg>
                 </div>
               </div>
-
-              {/* Amount Input */}
-              <div className="relative w-full sm:max-w-xs">
-                <input
-                  type="number"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  placeholder="0"
-                  className="w-full h-10 pl-3 pr-16 bg-slate-100 focus:bg-white rounded-lg border-0 ring-1 ring-slate-200 focus:ring-2 focus:ring-gold-400 text-sm font-bold text-slate-900 placeholder-slate-400 transition-all"
-                />
-                <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  Amount
-                </div>
-              </div>
             </div>
+
           </div>
         </div>
       </header>
 
-      {/* Main Content - List View */}
-      <main className="flex-grow max-w-4xl mx-auto w-full px-4 py-6">
+      {/* Main Content */}
+      <main className="flex-grow max-w-2xl mx-auto w-full px-4 py-6">
         
-        <div className="flex items-center justify-between mb-4 px-1">
-           <p className="text-sm text-slate-500 font-medium">
-             {results.length === 0 
-               ? "Enter an amount to see where you're wealthy." 
-               : `Wealthy in ${results.length} location${results.length !== 1 ? 's' : ''}`}
+        {/* Results Count */}
+        <div className="mb-3 px-1 flex items-center justify-between">
+           <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+             {results.length > 0 ? 'Your Kingdom' : 'Results'}
            </p>
+           {results.length > 0 && (
+             <span className="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+               {results.length} Countries
+             </span>
+           )}
         </div>
 
-        <div className="flex flex-col gap-3">
+        {/* List of Cards */}
+        <div className="flex flex-col gap-2">
           {results.length > 0 ? (
             results.map((item) => (
               <ResultCard 
@@ -127,10 +128,12 @@ function App() {
               />
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center bg-white rounded-xl border border-dashed border-slate-200">
-              <div className="text-4xl mb-2 opacity-50">✈️</div>
-              <p className="text-slate-400 font-medium text-sm">No results yet.</p>
-              <p className="text-slate-300 text-xs mt-1">Try increasing the amount.</p>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-2xl grayscale opacity-50">
+                🌍
+              </div>
+              <p className="text-slate-500 font-medium">No millionaire status found yet.</p>
+              <p className="text-slate-400 text-sm mt-1">Enter a higher amount to see where you rule.</p>
             </div>
           )}
         </div>
