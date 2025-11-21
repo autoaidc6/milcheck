@@ -1,0 +1,5 @@
+{
+  "name": "MillionaireStatus",
+  "description": "Check which countries consider you a millionaire based on your net worth.",
+  "requestFramePermissions": []
+}
